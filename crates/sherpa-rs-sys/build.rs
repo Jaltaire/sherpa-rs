@@ -409,14 +409,28 @@ fn main() {
             if let Some(libs) = dist.libs {
                 for lib in libs.iter() {
                     let lib_path = cache_dir.join(lib);
-                    let lib_parent = lib_path.parent().unwrap();
-                    add_search_path(lib_parent);
+                    if lib.contains(".framework/") {
+                        let framework_bundle = lib_path
+                            .ancestors()
+                            .find(|ancestor| {
+                                ancestor.extension().map(|e| e == "framework").unwrap_or(false)
+                            })
+                            .expect("A framework path must contain a .framework bundle.");
+                        let framework_dir = framework_bundle
+                            .parent()
+                            .expect("A framework bundle must have a parent directory.");
+                        let framework_name = framework_bundle
+                            .file_stem()
+                            .expect("A framework bundle must have a name.")
+                            .to_string_lossy();
+                        println!("cargo:rustc-link-search=framework={}", framework_dir.display());
+                        link_framework(&framework_name);
+                    } else {
+                        let lib_parent = lib_path.parent().unwrap();
+                        add_search_path(lib_parent);
+                        sherpa_libs.push(download_binaries::extract_lib_name(lib));
+                    }
                 }
-
-                sherpa_libs = libs
-                    .iter()
-                    .map(download_binaries::extract_lib_name)
-                    .collect();
             } else {
                 sherpa_libs = extract_lib_names(&lib_dir, is_dynamic, &target_os);
             }
