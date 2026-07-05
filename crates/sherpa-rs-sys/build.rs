@@ -57,17 +57,19 @@ fn copy_file(src: PathBuf, dst: PathBuf) {
 fn get_cargo_target_dir() -> Result<std::path::PathBuf, Box<dyn std::error::Error>> {
     let out_dir = std::path::PathBuf::from(std::env::var("OUT_DIR")?);
     let profile = std::env::var("PROFILE")?;
-    let mut target_dir = None;
     let mut sub_path = out_dir.as_path();
     while let Some(parent) = sub_path.parent() {
         if parent.ends_with(&profile) {
-            target_dir = Some(parent);
-            break;
+            return Ok(parent.to_path_buf());
+        }
+        if parent.file_name().map(|name| name == "build").unwrap_or(false) {
+            if let Some(target_dir) = parent.parent() {
+                return Ok(target_dir.to_path_buf());
+            }
         }
         sub_path = parent;
     }
-    let target_dir = target_dir.ok_or("not found")?;
-    Ok(target_dir.to_path_buf())
+    Err("not found".into())
 }
 
 fn delete_folder(src: &Path) -> std::io::Result<()> {
