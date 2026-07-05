@@ -45,15 +45,15 @@
       "is_dynamic": false,
       "targets": {
         "aarch64-apple-ios": [
-          "build-ios/ios-onnxruntime/1.17.1/onnxruntime.xcframework/ios-arm64/libonnxruntime.a",
+          "build-ios/ios-onnxruntime/1.26.0/onnxruntime.xcframework/ios-arm64/onnxruntime.framework/onnxruntime",
           "build-ios/sherpa-onnx.xcframework/ios-arm64/libsherpa-onnx.a"
         ],
         "aarch64-apple-ios-sim": [
-          "build-ios/ios-onnxruntime/1.17.1/onnxruntime.xcframework/ios-arm64_x86_64-simulator/libonnxruntime.a",
+          "build-ios/ios-onnxruntime/1.26.0/onnxruntime.xcframework/ios-arm64_x86_64-simulator/onnxruntime.framework/onnxruntime",
           "build-ios/sherpa-onnx.xcframework/ios-arm64_x86_64-simulator/libsherpa-onnx.a"
         ],
         "x86_64-apple-ios": [
-          "build-ios/ios-onnxruntime/1.17.1/onnxruntime.xcframework/ios-arm64_x86_64-simulator/libonnxruntime.a",
+          "build-ios/ios-onnxruntime/1.26.0/onnxruntime.xcframework/ios-arm64_x86_64-simulator/onnxruntime.framework/onnxruntime",
           "build-ios/sherpa-onnx.xcframework/ios-arm64_x86_64-simulator/libsherpa-onnx.a"
         ]
       }
