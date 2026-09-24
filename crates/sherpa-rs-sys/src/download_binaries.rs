@@ -102,8 +102,20 @@ pub struct DistTable {
 }
 
 #[derive(Debug, Clone)]
-pub struct Dist {
+pub struct Archive {
     pub url: String,
+    pub checksum: String,
+}
+
+impl Archive {
+    pub fn file_name(&self) -> &str {
+        self.url.rsplit('/').next().unwrap_or(&self.url)
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct Dist {
+    pub archives: Vec<Archive>,
     pub name: String,
     pub checksum: String,
     pub libs: Option<Vec<String>>, // Paths to the extracted libraries
@@ -130,6 +142,15 @@ impl DistTable {
                 let archive_value = archive_value.as_str().unwrap();
                 value["archive"] = Value::String(archive_value.replace("{tag}", &table.tag));
             }
+            if let Some(archives) = value.get("archives") {
+                let expanded: Vec<Value> = archives
+                    .as_array()
+                    .expect("archives must be a list of addresses")
+                    .iter()
+                    .map(|url| Value::String(url.as_str().unwrap().replace("{tag}", &table.tag)))
+                    .collect();
+                value["archives"] = Value::Array(expanded);
+            }
         }
         table
     }
@@ -152,6 +173,45 @@ impl DistTable {
             "raw target_dist: {:?}",
             serde_json::to_string(target_dist).unwrap()
         );
+        if let Some(addresses) = target_dist.get("archives") {
+            let mut archives = Vec::new();
+            for url in addresses.as_array()? {
+                let url = url.as_str()?.to_string();
+                let file_name = url.rsplit('/').next()?.to_string();
+                let checksum = DIST_CHECKSUM.get(&file_name)?;
+                archives.push(Archive {
+                    url,
+                    checksum: checksum.to_string(),
+                });
+            }
+            let libs: Option<Vec<String>> = target_dist["targets"][target].as_array().map(|libs| {
+                libs.iter()
+                    .map(|lib| lib.as_str().unwrap().to_string())
+                    .collect()
+            });
+            if let Some(target_dist) = target_dist.get("is_dynamic") {
+                *is_dynamic = target_dist.as_bool()?;
+            }
+            let joined: Vec<&str> = archives
+                .iter()
+                .map(|archive| archive.checksum.as_str())
+                .collect();
+            let checksum = if archives.len() == 1 {
+                archives[0].checksum.clone()
+            } else {
+                sha256(joined.join("\n").as_bytes())
+            };
+            let name = archives.first()?.file_name().replace(".zip", "");
+            let dist = Dist {
+                archives,
+                name,
+                checksum,
+                libs,
+            };
+            debug_log!("dist: {:?}", dist);
+            return Some(dist);
+        }
+
         let archive = if target_dist.get("archive").is_some() {
             // archive name
             // static/dynamic located in 'is_dynamic' field
@@ -183,7 +243,10 @@ impl DistTable {
         }
 
         let dist = Dist {
-            url,
+            archives: vec![Archive {
+                url,
+                checksum: checksum.to_string(),
+            }],
             name,
             checksum: checksum.to_string(),
             libs,
@@ -233,6 +296,30 @@ pub fn extract_tgz(buf: &[u8], output: &Path) {
     let tar = flate2::read::GzDecoder::new(buf);
     let mut archive = tar::Archive::new(tar);
     archive.unpack(output).expect("Failed to extract .tgz file");
+}
+
+pub fn extract(buf: &[u8], file_name: &str, output: &Path) {
+    if file_name.ends_with(".zip") {
+        extract_zip(buf, file_name, output);
+    } else {
+        extract_tbz(buf, output);
+    }
+}
+
+pub fn extract_zip(buf: &[u8], file_name: &str, output: &Path) {
+    debug_log!("extracting zip to {}", output.display());
+    let archive = output.join(file_name);
+    std::fs::write(&archive, buf).expect("Failed to write the downloaded zip");
+    let status = std::process::Command::new("unzip")
+        .arg("-q")
+        .arg("-o")
+        .arg(&archive)
+        .arg("-d")
+        .arg(output)
+        .status()
+        .expect("Failed to run unzip");
+    assert!(status.success(), "unzip failed for {}", archive.display());
+    std::fs::remove_file(&archive).expect("Failed to remove the downloaded zip");
 }
 
 pub fn extract_tbz(buf: &[u8], output: &Path) {

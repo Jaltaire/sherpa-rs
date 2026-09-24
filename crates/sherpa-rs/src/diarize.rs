@@ -56,6 +56,7 @@ impl Diarize {
         let clustering_config = sherpa_rs_sys::SherpaOnnxFastClusteringConfig {
             num_clusters: config.num_clusters.unwrap_or(4),
             threshold: config.threshold.unwrap_or(0.5),
+            compute_confidence: 0,
         };
 
         let embedding_model = cstring_from_str(embedding_model);
@@ -75,6 +76,7 @@ impl Diarize {
             segmentation: sherpa_rs_sys::SherpaOnnxOfflineSpeakerSegmentationModelConfig {
                 pyannote: sherpa_rs_sys::SherpaOnnxOfflineSpeakerSegmentationPyannoteModelConfig {
                     model: segmentation_model.as_ptr(),
+                    window_shift_ratio: 0.0,
                 },
                 num_threads: 1,
                 debug,

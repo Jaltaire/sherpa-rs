@@ -62,7 +62,11 @@ fn get_cargo_target_dir() -> Result<std::path::PathBuf, Box<dyn std::error::Erro
         if parent.ends_with(&profile) {
             return Ok(parent.to_path_buf());
         }
-        if parent.file_name().map(|name| name == "build").unwrap_or(false) {
+        if parent
+            .file_name()
+            .map(|name| name == "build")
+            .unwrap_or(false)
+        {
             if let Some(target_dir) = parent.parent() {
                 return Ok(target_dir.to_path_buf());
             }
@@ -363,7 +367,7 @@ fn main() {
     #[cfg(feature = "download-binaries")]
     {
         // Download libraries, cache and set SHERPA_LIB_PATH
-        use download_binaries::{extract_tbz, fetch_file, get_cache_dir, sha256, DIST_TABLE};
+        use download_binaries::{extract, fetch_file, get_cache_dir, sha256, DIST_TABLE};
         debug_log!("Download binaries enabled");
         // debug_log!("Dist table: {:?}", DIST_TABLE.targets);
         // Try download sherpa libs and set SHERPA_LIB_PATH
@@ -392,10 +396,12 @@ fn main() {
                 .unwrap_or(true);
 
             if (is_mobile && cache_dir_empty) || (!is_mobile && !lib_dir.exists()) {
-                let downloaded_file = fetch_file(&dist.url);
-                let hash = sha256(&downloaded_file);
-                verify_checksum(&hash, &dist.checksum);
-                extract_tbz(&downloaded_file, &cache_dir);
+                for archive in &dist.archives {
+                    let downloaded_file = fetch_file(&archive.url);
+                    let hash = sha256(&downloaded_file);
+                    verify_checksum(&hash, &archive.checksum);
+                    extract(&downloaded_file, archive.file_name(), &cache_dir);
+                }
             } else {
                 debug_log!("Skip fetch file. Using cache from {}", lib_dir.display());
             }
@@ -415,7 +421,10 @@ fn main() {
                         let framework_bundle = lib_path
                             .ancestors()
                             .find(|ancestor| {
-                                ancestor.extension().map(|e| e == "framework").unwrap_or(false)
+                                ancestor
+                                    .extension()
+                                    .map(|e| e == "framework")
+                                    .unwrap_or(false)
                             })
                             .expect("A framework path must contain a .framework bundle.");
                         let framework_dir = framework_bundle
@@ -425,7 +434,10 @@ fn main() {
                             .file_stem()
                             .expect("A framework bundle must have a name.")
                             .to_string_lossy();
-                        println!("cargo:rustc-link-search=framework={}", framework_dir.display());
+                        println!(
+                            "cargo:rustc-link-search=framework={}",
+                            framework_dir.display()
+                        );
                         link_framework(&framework_name);
                     } else {
                         let lib_parent = lib_path.parent().unwrap();

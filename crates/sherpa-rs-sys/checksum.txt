@@ -292,3 +292,7 @@ sherpa-onnx-wasm-simd-v1.13.3-zh-en-asr-zipformer.tar.bz2	e9fdaa55ed541dca9064c4
 sherpa_onnx-v1.13.3.har	ff93924b6ff48ad777234e2f7ea9f636603515802f430d0f7005673a17c189b2
 sherpa_onnx_hos-v1.13.3.har	de30629b2c2988b12cd178e867d2a65f22b8c109d531b3a9111c53ad0a97dda7
 sherpa_onnx_ohos-v1.13.3.har	252cb5bed5a62a583841de6bc59cdf90ba500a67ce248920d85fafb813828ab7
+sherpa-onnx-v1.13.8-ios-static.xcframework.zip	6b8e769cb153343270fdccbe92e3b3db0d1c421d67fa0989ab01fdf5b2fcf2de
+onnxruntime-ios-static-xcframework-1.28.2.xcframework.zip	2c2299acbb461d26d4bac4bc85985d40e7c7177ed6072703ae0846d88b0b4599
+sherpa-onnx-v1.13.8-android.tar.bz2	2ff63469a71cb6009aa2e3ed5f4a670f8abdcbe4bb9ffd23776afc792a6b4f44
+sherpa-onnx-v1.13.8-osx-arm64-static-lib.tar.bz2	9091bf160dc7fdacedbc906b212badf53c2993f4e5277a0e03998e96c31d60da

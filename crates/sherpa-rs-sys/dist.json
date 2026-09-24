@@ -1,5 +1,5 @@
 {
-  "tag": "v1.13.3",
+  "tag": "v1.13.8",
   "url": "https://github.com/k2-fsa/sherpa-onnx/releases/download/{tag}/{archive}",
   "targets": {
     "x86_64-pc-windows-msvc": {
@@ -15,7 +15,7 @@
       "dynamic": "sherpa-onnx-{tag}-linux-aarch64-shared-cpu.tar.bz2"
     },
     "aarch64-apple-darwin": {
-      "static": "sherpa-onnx-{tag}-osx-universal2-static.tar.bz2",
+      "static": "sherpa-onnx-{tag}-osx-arm64-static-lib.tar.bz2",
       "dynamic": "sherpa-onnx-{tag}-osx-universal2-shared.tar.bz2"
     },
     "x86_64-apple-darwin": {
@@ -41,20 +41,23 @@
       }
     },
     "ios": {
-      "archive": "sherpa-onnx-{tag}-ios.tar.bz2",
+      "archives": [
+        "https://github.com/k2-fsa/sherpa-onnx/releases/download/xcframework/sherpa-onnx-{tag}-ios-static.xcframework.zip",
+        "https://github.com/csukuangfj/onnxruntime-libs/releases/download/v1.28.2/onnxruntime-ios-static-xcframework-1.28.2.xcframework.zip"
+      ],
       "is_dynamic": false,
       "targets": {
         "aarch64-apple-ios": [
-          "build-ios/ios-onnxruntime/1.26.0/onnxruntime.xcframework/ios-arm64/onnxruntime.framework/onnxruntime",
-          "build-ios/sherpa-onnx.xcframework/ios-arm64/libsherpa-onnx.a"
+          "onnxruntime.xcframework/ios-arm64/onnxruntime.framework/onnxruntime",
+          "sherpa-onnx.xcframework/ios-arm64/SherpaOnnxC.framework/SherpaOnnxC"
         ],
         "aarch64-apple-ios-sim": [
-          "build-ios/ios-onnxruntime/1.26.0/onnxruntime.xcframework/ios-arm64_x86_64-simulator/onnxruntime.framework/onnxruntime",
-          "build-ios/sherpa-onnx.xcframework/ios-arm64_x86_64-simulator/libsherpa-onnx.a"
+          "onnxruntime.xcframework/ios-arm64_x86_64-simulator/onnxruntime.framework/onnxruntime",
+          "sherpa-onnx.xcframework/ios-arm64_x86_64-simulator/SherpaOnnxC.framework/SherpaOnnxC"
         ],
         "x86_64-apple-ios": [
-          "build-ios/ios-onnxruntime/1.26.0/onnxruntime.xcframework/ios-arm64_x86_64-simulator/onnxruntime.framework/onnxruntime",
-          "build-ios/sherpa-onnx.xcframework/ios-arm64_x86_64-simulator/libsherpa-onnx.a"
+          "onnxruntime.xcframework/ios-arm64_x86_64-simulator/onnxruntime.framework/onnxruntime",
+          "sherpa-onnx.xcframework/ios-arm64_x86_64-simulator/SherpaOnnxC.framework/SherpaOnnxC"
         ]
       }
     }
