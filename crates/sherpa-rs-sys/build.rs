@@ -514,6 +514,7 @@ fn main() {
 
         let build_dir = config.build();
         add_search_path(&build_dir);
+        add_search_path(build_dir.join("lib"));
 
         // Extract libs on desktop platforms
         if !is_mobile {
@@ -524,7 +525,6 @@ fn main() {
     // Linking
 
     debug_log!("Sherpa libs: {:?}", sherpa_libs);
-    add_search_path(out_dir.join("lib"));
 
     for lib in sherpa_libs {
         if lib.contains("cxx") {
