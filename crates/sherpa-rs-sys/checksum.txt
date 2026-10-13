@@ -296,3 +296,4 @@ sherpa-onnx-v1.13.8-ios-static.xcframework.zip	6b8e769cb153343270fdccbe92e3b3db0
 onnxruntime-ios-static-xcframework-1.28.2.xcframework.zip	2c2299acbb461d26d4bac4bc85985d40e7c7177ed6072703ae0846d88b0b4599
 sherpa-onnx-v1.13.8-android.tar.bz2	2ff63469a71cb6009aa2e3ed5f4a670f8abdcbe4bb9ffd23776afc792a6b4f44
 sherpa-onnx-v1.13.8-osx-arm64-static-lib.tar.bz2	9091bf160dc7fdacedbc906b212badf53c2993f4e5277a0e03998e96c31d60da
+sherpa-onnx-v1.13.8-linux-x64-static-lib.tar.bz2	e1fdc5b67530e15741ef897fa5ffff297056f3bf0c6d829a27af9225a4c4b5a6
